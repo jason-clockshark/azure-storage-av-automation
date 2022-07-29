@@ -1,15 +1,14 @@
 param (
-    [Parameter(Mandatory=$true)][string] $sourceCodeContainerName,
-    [Parameter(Mandatory=$true)][string] $sourceCodeStorageAccountName,
-    [Parameter(Mandatory=$true)][string] $targetContainerName,
-    [Parameter(Mandatory=$true)][string] $targetStorageAccountName,
-    [Parameter(Mandatory=$true)][string] $targetResourceGroup,
-    [Parameter(Mandatory=$true)][string] $subscriptionID,
-    [Parameter(Mandatory=$true)][string] $deploymentResourceGroupName,
-    [Parameter(Mandatory=$true)][string] $deploymentResourceGroupLocation,
-    [Parameter(Mandatory=$true)][string] $vmUserName,
-    [Parameter(Mandatory=$true)][string] $vmPassword,
-    $ArmTemplatFile = "$PSScriptRoot/../ARM_template/AntivirusAutomationForStorageTemplate.json"
+    $sourceCodeContainerName = "avautomationsource",
+    $sourceCodeStorageAccountName = "avautomationsource",
+    $targetStorageAccountName = "clocksharkfiles",
+    $targetResourceGroup = "Shared-Storage-EastUS",
+    $subscriptionID = "388cca1e-ba7d-4132-8bad-086fd38d8282",
+    $deploymentResourceGroupName = "AVAutomation-clocksharkfiles",
+    $deploymentResourceGroupLocation = "eastus",
+    $vmUserName = "jasondonnell",
+    $vmPassword = "Goshark1!",
+    $ArmTemplateFile = "$PSScriptRoot/../ARM_template/AntivirusAutomationForStorageTemplate.json"
 )
 
 $vmPassword = ConvertTo-SecureString $vmPassword -AsPlainText -Force
@@ -23,6 +22,7 @@ $ScanUploadedBlobRoot = "$PSScriptRoot\..\ScanUploadedBlobFunction"
 $ScanUploadedBlobZipPath = "$ScanUploadedBlobRoot\ScanUploadedBlobFunction.zip"
 
 az login
+az account set --subscription $subscriptionID
 
 #Build and Zip ScanHttpServer code 
 Write-Host Build ScanHttpServer
@@ -108,11 +108,10 @@ az deployment group create `
     --subscription $subscriptionID `
     --name "AntivirusAutomationForStorageTemplate" `
     --resource-group $deploymentResourceGroupName `
-    --template-file $ArmTemplatFile `
+    --template-file $ArmTemplateFile `
     --parameters ScanHttpServerZipURL=$ScanHttpServerUrl `
     --parameters ScanUploadedBlobFunctionZipURL=$ScanUploadedBlobFubctionUrl `
     --parameters VMInitScriptURL=$VMInitScriptUrl `
-    --parameters NameOfTargetContainer=$targetContainerName `
     --parameters NameOfTargetStorageAccount=$targetStorageAccountName `
     --parameters NameOfTheResourceGroupTheTargetStorageAccountBelongsTo=$targetResourceGroup `
     --parameters SubscriptionIDOfTheTargetStorageAccount=$subscriptionID `

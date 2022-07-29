@@ -1,0 +1,13 @@
+{
+  "generatedBy": "Microsoft.NET.Sdk.Functions.Generator-4.1.1",
+  "configurationSource": "attributes",
+  "bindings": [
+    {
+      "type": "eventGridTrigger",
+      "name": "eventGridEvent"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/ScanUploadedBlobFunction.dll",
+  "entryPoint": "ScanUploadedBlobFunction.ScanUploadedBlob.Run"
+}

@@ -1,7 +1,5 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Threading.Tasks;
 
@@ -11,15 +9,17 @@ namespace ScanUploadedBlobFunction
     {
         private ScanResults scanResults { get; }
         private ILogger log { get; }
-        public Remediation(ScanResults scanResults, ILogger log)
+        private string srcContainerName { get; }
+        public Remediation(ScanResults scanResults, ILogger log, string srcContainerName)
         {
             this.scanResults = scanResults;
             this.log = log;
+            this.srcContainerName = srcContainerName;
         }
 
         public void Start()
         {
-            string srcContainerName = Environment.GetEnvironmentVariable("targetContainerName");
+            //string srcContainerName = Environment.GetEnvironmentVariable("targetContainerName");
 
             if (scanResults.isThreat)
             {
@@ -28,28 +28,26 @@ namespace ScanUploadedBlobFunction
                 {
                     string malwareContainerName = Environment.GetEnvironmentVariable("malwareContainerName");
                     MoveBlob(scanResults.fileName, srcContainerName, malwareContainerName, log).GetAwaiter().GetResult();
-                    log.LogInformation("A malicious file was detected. It has been moved from the unscanned container to the quarantine container");
+                    log.LogInformation("A malicious file was detected. It has been moved to the quarantine container");
                 }
-
                 catch (Exception e)
                 {
                     log.LogError($"A malicious file was detected, but moving it to the quarantine storage container failed. {e.Message}");
                 }
             }
-
             else
             {
-                try
-                {
-                    string cleanContainerName = Environment.GetEnvironmentVariable("cleanContainerName");
-                    MoveBlob(scanResults.fileName, srcContainerName, cleanContainerName, log).GetAwaiter().GetResult();
-                    log.LogInformation("The file is clean. It has been moved from the unscanned container to the clean container");
-                }
-
-                catch (Exception e)
-                {
-                    log.LogError($"The file is clean, but moving it to the clean storage container failed. {e.Message}");
-                }
+                log.LogInformation("The file is clean. No action has been taken.");
+                //try
+                //{
+                //    string cleanContainerName = Environment.GetEnvironmentVariable("cleanContainerName");
+                //    MoveBlob(scanResults.fileName, srcContainerName, cleanContainerName, log).GetAwaiter().GetResult();
+                //    log.LogInformation("The file is clean. It has been moved from the unscanned container to the clean container");
+                //}
+                //catch (Exception e)
+                //{
+                //    log.LogError($"The file is clean, but moving it to the clean storage container failed. {e.Message}");
+                //}
             }
         }
 
