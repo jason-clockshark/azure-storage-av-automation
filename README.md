@@ -1,3 +1,4 @@
+[![Board Status](https://dev.azure.com/clockshark/5651c56c-1304-40af-b17a-26c5f00bdc6f/1f3a37f0-d35a-421c-afb5-470a9dc4994e/_apis/work/boardbadge/faa02313-a1bb-42c0-ba19-e85393d4edf2)](https://dev.azure.com/clockshark/5651c56c-1304-40af-b17a-26c5f00bdc6f/_boards/board/t/1f3a37f0-d35a-421c-afb5-470a9dc4994e/Microsoft.RequirementCategory)
 # Antivirus Automation for Azure Storage
 ##### Authored by: Aviv Shitrit, Inbal Argov | Updated: May 18th, 2021  
 
